@@ -1,3 +1,18 @@
 {
-  "extends": "@react-native/typescript-config"
+  "extends": "@react-native/typescript-config",
+  "include": ["src/components", "custom.d.ts", "src"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@utils": ["./src/utils"],
+      "@stores": ["./src/stores"],
+      "@assets": ["./src/assets"],
+      "@constants": ["./src/constants"],
+      "@components": ["./src/components"],
+      "@navigations": ["./src/navigations"],
+      "@screens": ["./src/screens"],
+      "@styles": ["./src/styles"],
+      "@models": ["./src/models"]
+    }
+  }
 }

@@ -1,28 +1,23 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, {JSX} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {Provider} from 'mobx-react';
+import CurrencyStore from './src/stores/currencyStore';
+import {RootStackNavigator} from './src/navigations';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import FlashMessage from 'react-native-flash-message';
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+function App(): JSX.Element {
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <NewAppScreen templateFileName="App.tsx" />
-    </View>
+    <SafeAreaProvider>
+          <NavigationContainer>
+            <Provider store={CurrencyStore}>
+              <RootStackNavigator />
+              <FlashMessage position="top" />
+            </Provider>
+          </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default App;
