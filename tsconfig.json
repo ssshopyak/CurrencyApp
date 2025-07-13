@@ -4,8 +4,10 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "@api": ["./src/api"],
       "@utils": ["./src/utils"],
       "@stores": ["./src/stores"],
+      "@storage": ["./src/storage"],
       "@assets": ["./src/assets"],
       "@constants": ["./src/constants"],
       "@components": ["./src/components"],

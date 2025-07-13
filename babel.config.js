@@ -1,5 +1,5 @@
 module.exports = {
-presets: ['module:@react-native/babel-preset'],
+  presets: ['module:@react-native/babel-preset'],
   plugins: [
     [
       'module-resolver',
@@ -17,6 +17,7 @@ presets: ['module:@react-native/babel-preset'],
           '.json',
         ],
         alias: {
+          '@api': './src/api',
           '@utils': './src/utils',
           '@assets': './src/assets',
           '@components': './src/components',
@@ -29,6 +30,12 @@ presets: ['module:@react-native/babel-preset'],
         },
       },
     ],
+    ['module:react-native-dotenv', {
+      moduleName: '@env',
+      path: '.env',
+      safe: false,
+      allowUndefined: true,
+    }],
     'react-native-reanimated/plugin',
   ],
 };

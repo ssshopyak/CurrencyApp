@@ -1,6 +1,5 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {observer} from 'mobx-react';
 import { CurrencyScreen, FavouritesScreen } from '@screens';
 
 export type RootStackParamList = {
@@ -22,4 +21,4 @@ const RootStackNavigator = () => {
   );
 };
 
-export default observer(RootStackNavigator);
+export default RootStackNavigator;
