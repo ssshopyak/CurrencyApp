@@ -1,24 +1,35 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { fetchExchangeRates } from '@api';
+import {fetchExchangeRates} from '@api';
+import {IRatesResponse} from '@models';
+import {showError} from './flashMessages';
 
-export const useExchangeRates = () => {
+const CACHE_KEY = 'cachedRates';
+
+export function useExchangeRates() {
   const [rates, setRates] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [lastUpdate, setLastUpdate] = useState<string | null>(null);
 
   const loadRates = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      const data = await fetchExchangeRates();
-      setRates(data);
-      await AsyncStorage.setItem('cachedRates', JSON.stringify(data));
+      const data: IRatesResponse = await fetchExchangeRates();
+      setRates(data.rates);
+      setLastUpdate(data.date);
+      await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(data));
     } catch (e) {
-      const cached = await AsyncStorage.getItem('cachedRates');
+      const cached = await AsyncStorage.getItem(CACHE_KEY);
       if (cached) {
-        setRates(JSON.parse(cached));
+        const data: IRatesResponse = JSON.parse(cached);
+        console.log(data);
+        setRates(data.rates);
+        setLastUpdate(data.date);
+        showError('Показані кешовані дані через відсутність мережі');
       } else {
-        setError('No data available');
+        setError('Не вдалося завантажити курси валют');
       }
     } finally {
       setLoading(false);
@@ -29,5 +40,5 @@ export const useExchangeRates = () => {
     loadRates();
   }, []);
 
-  return { rates, loading, error, reload: loadRates };
-};
+  return {rates, loading, error, reload: loadRates, lastUpdate};
+}

@@ -1,4 +1,4 @@
-import { getData, storeData } from "../storage";
+import {getData, storeData} from '../storage';
 const FAVORITES_KEY = 'favoritesCurrencies';
 
 export const getFavorites = async (): Promise<string[]> => {
@@ -8,11 +8,8 @@ export const getFavorites = async (): Promise<string[]> => {
 
 export const toggleFavorite = async (currency: string) => {
   const favorites = await getFavorites();
-  const updated = favorites.includes(currency)
-    ? favorites.filter(item => item !== currency)
-    : [...favorites, currency];
+  const updated = favorites.includes(currency) ? favorites.filter(item => item !== currency) : [...favorites, currency];
 
-  console.log('Updated favorites:', updated);
   await storeData(updated, FAVORITES_KEY);
   return updated;
 };

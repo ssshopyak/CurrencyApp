@@ -1,10 +1,10 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import { CurrencyScreen, FavouritesScreen } from '@screens';
+import {CurrencyScreen, FavouritesScreen} from '@screens';
 
 export type RootStackParamList = {
-    Currency: undefined;
-    Favourites: undefined;
+  Currency: undefined;
+  Favorites: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -15,8 +15,8 @@ const RootStackNavigator = () => {
       screenOptions={{
         headerShown: false,
       }}>
-          <Stack.Screen name="Currency" component={CurrencyScreen} />
-          <Stack.Screen name="Favourites" component={FavouritesScreen} />
+      <Stack.Screen name="Currency" component={CurrencyScreen} />
+      <Stack.Screen name="Favorites" component={FavouritesScreen} />
     </Stack.Navigator>
   );
 };

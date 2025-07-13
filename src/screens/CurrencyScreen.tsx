@@ -1,44 +1,63 @@
-import React, { useEffect, useState } from 'react';
-import { FlatList, Text, ActivityIndicator, RefreshControl } from 'react-native';
-import { showError, useExchangeRates } from '@utils';
-import { CurrencyItem } from '@components';
-import { getFavorites, toggleFavorite } from '@utils';
+import React, {useCallback, useState} from 'react';
+import {FlatList, View, Text, ActivityIndicator, RefreshControl, TouchableOpacity} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../navigations/RootStackNavigator';
+import {useExchangeRates} from '@utils';
+import {getFavorites, toggleFavorite} from '@utils';
+import {Header, CurrencyItem} from '@components';
+import {globalStyles, COLORS} from '../styles/globalStyle';
+import {useFocusEffect} from '@react-navigation/native';
 
-export default function CurrencyScreen () {
-  const { rates, loading, error, reload } = useExchangeRates();
+export default function CurrencyScreen() {
+  const {rates = {}, loading, error, reload, lastUpdate} = useExchangeRates();
   const [favorites, setFavorites] = useState<string[]>([]);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  useEffect(() => {
-    getFavorites().then(setFavorites);
-  }, []);
-
-  const handleToggleFavorite = async (currency: string) => {
-    console.log('Toggling favorite for:', currency);
-    try {
+  const onToggleFavorite = async (currency: string) => {
     const updated = await toggleFavorite(currency);
-    console.log('Updated favorites:', updated);
     setFavorites(updated);
-    } catch(err) {
-        showError('Error toggling favorite');
-    }
   };
 
-  if (loading) return <ActivityIndicator style={{ flex: 1 }} />;
-  if (error) return <Text>{error}</Text>;
+  useFocusEffect(
+    useCallback(() => {
+      getFavorites().then(setFavorites);
+    }, []),
+  );
 
   return (
-    <FlatList
-      data={Object.entries(rates)}
-      keyExtractor={([currency]) => currency}
-      refreshControl={<RefreshControl refreshing={loading} onRefresh={reload} />}
-      renderItem={({ item }) => (
-        <CurrencyItem
-          code={item[0]}
-          rate={item[1]}
-          isFavorite={favorites?.includes(item[0])}
-          onToggleFavorite={() => handleToggleFavorite(item[0])}
-        />
+    <View style={globalStyles.container}>
+      <Header
+        title="Валюти"
+        rightButton={
+          <TouchableOpacity onPress={() => navigation.navigate('Favorites')} style={globalStyles.buttonPrimary}>
+            <Text style={globalStyles.buttonPrimaryText}>⭐</Text>
+          </TouchableOpacity>
+        }
+      />
+
+      {loading && <ActivityIndicator style={{marginTop: 20}} size="large" color={COLORS.primary} />}
+
+      {error && <Text style={globalStyles.errorText}>{error}</Text>}
+
+      {!loading && !error && (
+        <>
+          <FlatList
+            data={Object.entries(rates)}
+            keyExtractor={([code]) => code}
+            refreshControl={<RefreshControl refreshing={loading} onRefresh={reload} />}
+            renderItem={({item: [code, rate]}) => (
+              <CurrencyItem
+                code={code}
+                rate={rate}
+                isFavorite={favorites.includes(code)}
+                onToggleFavorite={onToggleFavorite}
+              />
+            )}
+            ListFooterComponent={lastUpdate ? <Text style={{}}>Оновлено: {lastUpdate}</Text> : null}
+          />
+        </>
       )}
-    />
+    </View>
   );
-};
+}
